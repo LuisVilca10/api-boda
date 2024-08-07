@@ -15,6 +15,7 @@ class Guest extends Model
         'phone',
         'email',
         'response',
+        'number_of_people',
         'memory_text',
         'memory_file',
         'dish',

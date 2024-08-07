@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('lastname');
             $table->integer('phone');
-            $table->string('email');
-            $table->enum('response', ['asistire', 'no asistire'])->nullable();
+            $table->string('email')->nullable();
+            $table->enum('response', ['asistire', 'no asistire']);
+            $table->integer('number_of_people')->default(1); // Número total de personas
             $table->text('memory_text')->nullable();
             $table->string('memory_file')->nullable();
             $table->enum('dish', ['pollo', 'cerdo', 'res'])->nullable();

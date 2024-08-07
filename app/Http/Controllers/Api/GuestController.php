@@ -19,12 +19,11 @@ class GuestController extends Controller
                 'name' => 'required|string|max:255',
                 'lastname' => 'required|string|max:255',
                 'phone' => 'required|max:9',
-                'email' => 'required|string|email|max:255|unique:guests',
-                // 'response' => 'nullable|in:asistire,no asistire',
-                // 'memory_text' => 'nullable|string',
-                // 'memory_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf,doc,docx',
+                'number_of_people' => 'nullable|integer|min:1',
+                'email' => 'nullable|string|email|max:255',
+                'response' => 'required|in:asistire,no asistire',
                 'dish' => 'nullable|in:pollo,cerdo,res',
-                // 'table_id' => 'nullable|exists:tables,id',
+
             ]
         );
 
@@ -69,48 +68,54 @@ class GuestController extends Controller
         return response()->json($guest);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $guest = Guest::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|string|email|max:255|unique:guests,email,' . $guest->id,
-            'response' => 'sometimes|required|in:asistire,no asistire,dejar recuerdo',
-            'memory_text' => 'nullable|string',
-            'memory_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf,doc,docx',
-            'dish' => 'nullable|in:pollo,cerdo,res',
             'table_id' => 'nullable|exists:tables,id',
+            'number_of_people' => 'nullable|integer|min:1',
         ]);
 
-        if ($request->hasFile('memory_file')) {
-            $validated['memory_file'] = $request->file('memory_file')->store('memories');
+        $table = Table::find($request->table_id);
+        $newCapacity = $table->capacity_actual + $request->number_of_people;
+        if ($newCapacity <= $table->table_capacity) {
+            $guest->table_id = $request->table_id;
+            $table->capacity_actual;
+            $table->capacity_actual += $guest->number_of_people;
+            $table->save();
+        } else {
+            return response()->json(['error' => 'La mesa está llena'], 400);
         }
 
-        // Verificar si el invitado ya está asignado a una mesa diferente
-        if ($guest->table_id && $guest->table_id !== $validated['table_id']) {
-            return response()->json(['error' => 'El invitado ya está asignado a una mesa diferente'], 400);
-        }
+        // if ($request->hasFile('memory_file')) {
+        //     $validated['memory_file'] = $request->file('memory_file')->store('memories');
+        // }
 
-        if (isset($validated['table_id']) && $validated['table_id'] !== $guest->table_id) {
-            $newTable = Table::find($validated['table_id']);
-            $currentTable = Table::find($guest->table_id);
+        // // Verificar si el invitado ya está asignado a una mesa diferente
+        // if ($guest->table_id && $guest->table_id !== $validated['table_id']) {
+        //     return response()->json(['error' => 'El invitado ya está asignado a una mesa diferente'], 400);
+        // }
 
-            // Verificar si la nueva mesa está llena
-            if ($newTable->current_occupancy < $newTable->seat_capacity) {
-                $newTable->current_occupancy++;
-                $newTable->save();
+        // if (isset($validated['table_id']) && $validated['table_id'] !== $guest->table_id) {
+        //     $newTable = Table::find($validated['table_id']);
+        //     $currentTable = Table::find($guest->table_id);
 
-                if ($currentTable) {
-                    $currentTable->current_occupancy--;
-                    $currentTable->save();
-                }
+        //     // Verificar si la nueva mesa está llena
+        //     if ($newTable->current_occupancy < $newTable->seat_capacity) {
+        //         $newTable->current_occupancy++;
+        //         $newTable->save();
 
-                $guest->table_id = $validated['table_id'];
-            } else {
-                return response()->json(['error' => 'La nueva mesa está llena'], 400);
-            }
-        }
+        //         if ($currentTable) {
+        //             $currentTable->current_occupancy--;
+        //             $currentTable->save();
+        //         }
+
+        //         $guest->table_id = $validated['table_id'];
+        //     } else {
+        //         return response()->json(['error' => 'La nueva mesa está llena'], 400);
+        //     }
+        // }
 
         $guest->update($validated);
 
