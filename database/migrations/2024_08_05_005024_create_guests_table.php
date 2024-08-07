@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('memory_text')->nullable();
             $table->string('memory_file')->nullable();
             $table->enum('dish', ['pollo', 'cerdo', 'res'])->nullable();
-            $table->unsignedBigInteger('table_id');
+            $table->unsignedBigInteger('table_id')->nullable();
             $table->foreign('table_id')->references('id')->on('tables')->onDelete('cascade');
             $table->timestamps();
         });

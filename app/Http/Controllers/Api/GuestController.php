@@ -20,40 +20,40 @@ class GuestController extends Controller
                 'lastname' => 'required|string|max:255',
                 'phone' => 'required|max:9',
                 'email' => 'required|string|email|max:255|unique:guests',
-                'response' => 'nullable|in:asistire,no asistire',
-                'memory_text' => 'nullable|string',
-                'memory_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf,doc,docx',
+                // 'response' => 'nullable|in:asistire,no asistire',
+                // 'memory_text' => 'nullable|string',
+                // 'memory_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf,doc,docx',
                 'dish' => 'nullable|in:pollo,cerdo,res',
-                'table_id' => 'nullable|exists:tables,id',
+                // 'table_id' => 'nullable|exists:tables,id',
             ]
         );
 
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
-        if ($request->hasFile("portada")) {
-            $path = Storage::putFile("memories", $request->file("memory_file"));
-            $request->request->add(["imagen" => $path]);
-        }
+        // if ($request->hasFile("portada")) {
+        //     $path = Storage::putFile("memories", $request->file("memory_file"));
+        //     $request->request->add(["imagen" => $path]);
+        // }
 
         // Crear invitado
         $guest = Guest::create($request->all());
 
-        if ($request->response) {
-            if ($request->response == 'asistire' && $request->table_id) {
-                $table = Table::find($request->table_id);
+        // if ($request->response) {
+        //     if ($request->response == 'asistire' && $request->table_id) {
+        //         $table = Table::find($request->table_id);
 
-                if ($table->capacity_actual < $table->table_capacity) {
-                    $guest->table_id = $request->table_id;
-                    $guest->save();
+        //         if ($table->capacity_actual < $table->table_capacity) {
+        //             $guest->table_id = $request->table_id;
+        //             $guest->save();
 
-                    $table->capacity_actual++;
-                    $table->save();
-                } else {
-                    return response()->json(['error' => 'La mesa está llena'], 400);
-                }
-            }
-        }
+        //             $table->capacity_actual++;
+        //             $table->save();
+        //         } else {
+        //             return response()->json(['error' => 'La mesa está llena'], 400);
+        //         }
+        //     }
+        // }
 
         return response()->json(['message' => 'Invitado registrado exitosamente', 'guest' => $guest], 201);
     }
