@@ -18,6 +18,7 @@ class Guest extends Model
         'number_of_people',
         'memory_text',
         'memory_file',
+        'special_peticion',
         'dish',
         'table_id',
     ];

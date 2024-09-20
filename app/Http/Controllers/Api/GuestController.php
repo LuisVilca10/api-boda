@@ -23,6 +23,7 @@ class GuestController extends Controller
                 'email' => 'nullable|string|email|max:255',
                 'response' => 'required|in:asistire,no asistire',
                 'dish' => 'nullable|in:pollo,cerdo,res',
+                'special_peticion' => 'string',
 
             ]
         );
