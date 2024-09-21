@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUploadsTable extends Migration
+class CreateImagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateUploadsTable extends Migration
      */
     public function up()
     {
-        Schema::create('uploads', function (Blueprint $table) {
+        Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->string('filename')->unique(); // El nombre del archivo debe ser único
-            $table->text('comment')->nullable();
+            $table->string('image_path'); //path o ruta de la imagen que se subirá
+            $table->text('comment')->nullable(); // Comentario de la iamgen, 
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateUploadsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('uploads');
+        Schema::dropIfExists('images');
     }
 }

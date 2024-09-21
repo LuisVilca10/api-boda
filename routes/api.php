@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\GuestController;
 use App\Http\Controllers\Api\TableController;
-use App\Http\Controllers\Api\ImageUploadController; // Importar el controlador
+use App\Http\Controllers\Api\ImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,7 +14,5 @@ Route::get('/user', function (Request $request) {
 // Rutas de recursos para huéspedes y mesas
 Route::resource('/guests', GuestController::class);
 Route::resource('/tables', TableController::class);
-
-// Ruta para subir imágenes
-Route::post('/upload', [ImageUploadController::class, 'store']);
-Route::get('/upload', [ImageUploadController::class, 'index']);
+//ruta a imagenes
+Route::resource('/images', ImageController::class);
